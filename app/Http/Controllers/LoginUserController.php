@@ -15,11 +15,17 @@ class LoginUserController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('/dashboard');
+            return response()->json([
+                'status' => 'success',
+                'user' => Auth::user(),
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'Неверные учетные данные.',
-        ]);
+        return response()->json([
+            'error' => true,
+            'validationException' => [
+                'email' => 'Неверные учетные данные.'
+            ],
+        ], 422);
     }
 }
